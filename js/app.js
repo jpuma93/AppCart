@@ -8,11 +8,17 @@ let coursesCart = [];
 
 loadEventsListeners();
 function loadEventsListeners() {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('carrito')) {
+            coursesCart = JSON.parse(localStorage.getItem('carrito'));
+            cartHTML();
+        }
+    });
     listCourses.addEventListener('click', addCourse);
     cart.addEventListener('click', removeCourse);
     clearCartBtn.addEventListener('click', function () {
         coursesCart = [];
-        clearHTML();
+        cartHTML();
     });
 }
 
@@ -26,6 +32,7 @@ function addCourse(e) {
 }
 
 function removeCourse(e) {
+    e.preventDefault();
     if (e.target.classList.contains('borrar-curso')) {
         const id = e.target.getAttribute('data-id');
         coursesCart = coursesCart.filter((course) => course.id !== id);
@@ -79,10 +86,15 @@ function cartHTML() {
         `;
         containerCart.appendChild(row);
     });
+    sincronizarLocalstorage();
 }
 
 function clearHTML() {
     while (containerCart.firstChild) {
         containerCart.removeChild(containerCart.firstChild);
     }
+}
+
+function sincronizarLocalstorage() {
+    localStorage.setItem('carrito', JSON.stringify(coursesCart));
 }
